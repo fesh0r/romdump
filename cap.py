@@ -5,6 +5,7 @@ CAP parser
 import struct
 from uuid import UUID
 
+from ichdesc import ICHDesc
 from fd import FD
 import guids as g
 
@@ -50,7 +51,10 @@ class CAP(object):
         self.hdr = data[:self.hdrlen]
         self.hdr_ext = data[self.hdrlen:self.body_offset]
         self.data = data[self.body_offset:self.size]
-        self.contents = FD(self.data, start + self.body_offset, prefix)
+        if ICHDesc.check_sig(self.data):
+            self.contents = ICHDesc(self.data, start + self.body_offset, prefix)
+        else:
+            self.contents = FD(self.data, start + self.body_offset, prefix)
 
     def __str__(self):
         return '0x%08x+0x%08x: CAP' % (self.start, self.size)
@@ -64,7 +68,7 @@ class CAP(object):
     def dump(self):
         fnprefix = '%s%08x' % (self.prefix, self.start)
         fn = '%s_cap.bin' % fnprefix
-        print 'Dumping CAP header to %s' % fn
+        print 'Dumping CAP to %s' % fn
         with open(fn, 'wb') as fout:
             fout.write(self.hdr)
             fout.write(self.hdr_ext)

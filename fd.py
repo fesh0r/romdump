@@ -49,7 +49,7 @@ class FD(object):
     def dump(self):
         fnprefix = '%s%08x' % (self.prefix, self.start)
         fn = '%s.fd' % fnprefix
-        print 'Dumping FD to %s' % fn
+        print 'Dumping FD  to %s' % fn
         with open(fn, 'wb') as fout:
             fout.write(self.data)
 

@@ -39,11 +39,11 @@ class FV(object):
         block_size = 0
         while offset < self.hdrlen:
             (numb, blen) = _S_BLOCK.unpack_from(data, offset)
+            offset += _S_BLOCK.size
             if (numb, blen) == (0, 0):
                 break
             block_size += numb * blen
             self.blocks.append((numb, blen))
-            offset += _S_BLOCK.size
         self.block_size = block_size
 
     def __str__(self):
@@ -52,7 +52,7 @@ class FV(object):
     def showinfo(self, ts='  '):
         print ts + 'Reserved boot zone: %s' % (' '.join('%02x' % ord(c) for c in self.boot))
         print ts + 'GUID: %s' % g.name(self.guid)
-        print ts + 'Size: 0x%x (data 0x%x)' % (self.size, len(self.data))
+        print ts + 'Size: 0x%x (data 0x%x) (blocks 0x%x)' % (self.size, len(self.data), self.block_size)
         print ts + 'Attributes: 0x%08x' % self.attributes
         print ts + 'Checksum valid: %s' % self.checksum_valid
         print ts + 'Ext header: 0x%04x' % self.exthdr
@@ -60,12 +60,11 @@ class FV(object):
         print ts + 'Blocks:'
         for numb, blen in self.blocks:
             print ts + '  ' + '%d: len 0x%x' % (numb, blen)
-        print ts + 'Blocks valid: %s' % (self.block_size == self.size)
 
     def dump(self):
         fnprefix = '%s%08x' % (self.prefix, self.start)
         fn = '%s.fv' % fnprefix
-        print 'Dumping FV to %s' % fn
+        print 'Dumping FV  to %s' % fn
         with open(fn, 'wb') as fout:
             fout.write(self.hdr)
             fout.write(self.data)

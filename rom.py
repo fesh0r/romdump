@@ -3,6 +3,7 @@ ROM parser
 """
 
 from cap import CAP
+from ichdesc import ICHDesc
 from fd import FD
 from raw import RAW
 
@@ -15,6 +16,8 @@ class ROM(object):
         self.size = len(data)
         if CAP.check_sig(data):
             self.contents = CAP(data, start, prefix + '00_')
+        elif ICHDesc.check_sig(data):
+            self.contents = ICHDesc(data, start, prefix + '00_')
         else:
             self.contents = FD(data, start, prefix + '00_')
         self.trailing = None
