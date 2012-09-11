@@ -2,6 +2,8 @@
 FD parser
 """
 
+import os
+
 from fv import FV
 from raw import RAW
 
@@ -53,7 +55,11 @@ class FD(object):
         if self.full_dump:
             fnprefix = '%s%08x' % (self.prefix, self.start)
             fn = '%s.fd' % fnprefix
+            fn = os.path.normpath(fn)
             print 'Dumping FD  to %s' % fn
+            dn = os.path.dirname(fn)
+            if dn and not os.path.isdir(dn):
+                os.makedirs(dn)
             with open(fn, 'wb') as fout:
                 fout.write(self.data)
 

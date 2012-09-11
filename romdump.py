@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Dump EFI fd/rom file
+Dump EFI cap/fd/rom file
 """
 
 import sys

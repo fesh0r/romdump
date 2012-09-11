@@ -1,1 +1,3 @@
-#
+"""
+EFI ROM dumper
+"""

@@ -4,6 +4,7 @@ Common EFI GUIDs and utility functions
 
 from uuid import UUID
 
+
 ZERO_GUID                           = UUID('{00000000-0000-0000-0000-000000000000}')
 
 EFI_CAPSULE_GUID                    = UUID('{3B6686BD-0D76-4030-B70E-B5519E2FC5A0}')

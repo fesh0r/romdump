@@ -2,6 +2,7 @@
 CAP parser
 """
 
+import os
 import struct
 from uuid import UUID
 
@@ -68,7 +69,11 @@ class CAP(object):
     def dump(self):
         fnprefix = 'cap_%s%08x' % (self.prefix, self.start)
         fn = '%s.bin' % fnprefix
+        fn = os.path.normpath(fn)
         print 'Dumping CAP to %s' % fn
+        dn = os.path.dirname(fn)
+        if dn and not os.path.isdir(dn):
+            os.makedirs(dn)
         with open(fn, 'wb') as fout:
             fout.write(self.hdr)
             fout.write(self.hdr_ext)

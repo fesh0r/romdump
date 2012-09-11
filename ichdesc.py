@@ -44,7 +44,7 @@ class ICHDesc(object):
         self.regions = []
         offset = self.frba
         region_size = 0
-        for name, type in _REGIONS:
+        for name, class_ in _REGIONS:
             (base, limit) = _S_REGION.unpack_from(data, offset)
             offset += _S_REGION.size
             if limit >= base:
@@ -52,7 +52,7 @@ class ICHDesc(object):
                 limit = (limit << 12) | 0xfff
                 region_size += limit - base + 1
                 cur_prefix = '%s%s_' % (prefix, name)
-                self.blocks.append(type(data[base:limit + 1], start + base, cur_prefix))
+                self.blocks.append(class_(data[base:limit + 1], start + base, cur_prefix))
             else:
                 base = None
                 limit = None

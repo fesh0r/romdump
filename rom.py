@@ -22,7 +22,8 @@ class ROM(object):
             self.contents = FD(data, start, 'bios_', full_dump=False)
         self.trailing = None
         if self.size > self.contents.size:
-            self.trailing = RAW(data[self.contents.size:], start + self.contents.size)
+            cur_prefix = '%strl_' % prefix
+            self.trailing = RAW(data[self.contents.size:], start + self.contents.size, cur_prefix)
 
     def __str__(self):
         return '0x%08x+0x%08x: ROM' % (self.start, self.size)
