@@ -7,15 +7,18 @@ from raw import RAW
 
 
 class FD(object):
-    def __init__(self, data, start, prefix=''):
+    def __init__(self, data, start, prefix='', full_dump=True):
         self.start = start
         self.prefix = prefix
         self.data = data
         self.size = len(data)
+        self.full_dump = full_dump
         self.blocks = []
         start_ncb = 0
         cur_pos = 0
         index = 0
+        if prefix.startswith('bios_'):
+            prefix = prefix[len('bios_'):]
         while cur_pos < len(data):
             cur_prefix = '%s%02d_' % (prefix, index)
             if FV.check_sig(data, cur_pos):
@@ -47,11 +50,12 @@ class FD(object):
             block.showinfo(ts + '  ')
 
     def dump(self):
-        fnprefix = '%s%08x' % (self.prefix, self.start)
-        fn = '%s.fd' % fnprefix
-        print 'Dumping FD  to %s' % fn
-        with open(fn, 'wb') as fout:
-            fout.write(self.data)
+        if self.full_dump:
+            fnprefix = '%s%08x' % (self.prefix, self.start)
+            fn = '%s.fd' % fnprefix
+            print 'Dumping FD  to %s' % fn
+            with open(fn, 'wb') as fout:
+                fout.write(self.data)
 
         for block in self.blocks:
             block.dump()

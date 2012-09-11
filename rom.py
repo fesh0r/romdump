@@ -15,14 +15,14 @@ class ROM(object):
         self.data = data
         self.size = len(data)
         if CAP.check_sig(data):
-            self.contents = CAP(data, start, prefix + '00_')
+            self.contents = CAP(data, start)
         elif ICHDesc.check_sig(data):
-            self.contents = ICHDesc(data, start, prefix + '00_')
+            self.contents = ICHDesc(data, start)
         else:
-            self.contents = FD(data, start, prefix + '00_')
+            self.contents = FD(data, start, 'bios_', full_dump=False)
         self.trailing = None
         if self.size > self.contents.size:
-            self.trailing = RAW(data[self.contents.size:], start + self.contents.size, prefix + '01_')
+            self.trailing = RAW(data[self.contents.size:], start + self.contents.size)
 
     def __str__(self):
         return '0x%08x+0x%08x: ROM' % (self.start, self.size)

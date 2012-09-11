@@ -15,7 +15,7 @@ _SIG_SIZE = 0x4
 _S_HEADER = struct.Struct('< 16s 4s BBBB BBBB BBBB')
 _S_REGION = struct.Struct('< H H')
 
-_REGIONS = [('ich', False), ('bios', True), ('me', False), ('gbe', False), ('plat', False)]
+_REGIONS = [('ich', RAW), ('bios', FD), ('me', RAW), ('gbe', RAW), ('plat', RAW)]
 
 
 class ICHDesc(object):
@@ -23,7 +23,8 @@ class ICHDesc(object):
         self.start = start
         self.prefix = prefix
         offset = 0
-        (self.rsvd, self.flvalsig, fcba, nc, frba, nr, fmba, nm, fpsba, isl, fmsba, psl, _, _) = _S_HEADER.unpack_from(data, offset)
+        (self.rsvd, self.flvalsig, fcba, nc, frba, nr, fmba, nm, fpsba, isl,
+         fmsba, psl, _, _) = _S_HEADER.unpack_from(data, offset)
         offset += _S_HEADER.size
         if self.flvalsig != _SIG:
             raise ValueError('bad magic %s' % repr(self.flvalsig))
@@ -43,22 +44,15 @@ class ICHDesc(object):
         self.regions = []
         offset = self.frba
         region_size = 0
-        for index, (name, fd) in enumerate(_REGIONS):
-            if index < self.nr:
-                (base, limit) = _S_REGION.unpack_from(data, offset)
-                offset += _S_REGION.size
-            else:
-                base = 0x1fff
-                limit = 0x0000
+        for name, type in _REGIONS:
+            (base, limit) = _S_REGION.unpack_from(data, offset)
+            offset += _S_REGION.size
             if limit >= base:
                 base = base << 12
                 limit = (limit << 12) | 0xfff
                 region_size += limit - base + 1
-                cur_prefix = '%s%02d_' % (prefix, index)
-                if fd:
-                    self.blocks.append(FD(data[base:limit + 1], start + base, cur_prefix))
-                else:
-                    self.blocks.append(RAW(data[base:limit + 1], start + base, cur_prefix))
+                cur_prefix = '%s%s_' % (prefix, name)
+                self.blocks.append(type(data[base:limit + 1], start + base, cur_prefix))
             else:
                 base = None
                 limit = None

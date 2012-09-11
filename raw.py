@@ -22,10 +22,7 @@ class RAW(object):
 
     def dump(self):
         fnprefix = '%s%08x' % (self.prefix, self.start)
-        if self.is_blank:
-            fn = '%s_empty.bin' % fnprefix
-        else:
-            fn = '%s.bin' % fnprefix
+        fn = '%s.bin' % fnprefix
         print 'Dumping RAW to %s' % fn
         with open(fn, 'wb') as fout:
             fout.write(self.data)
