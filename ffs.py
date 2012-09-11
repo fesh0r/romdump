@@ -59,34 +59,10 @@ class FFS(object):
     @staticmethod
     def new(ffs_guid, data, start, prefix=''):
         if ffs_guid == g.EFI_FIRMWARE_FILE_SYSTEM_GUID:
-            return FFS1(data, start, prefix)
+            return FFS(1, data, start, prefix)
         elif ffs_guid == g.EFI_FIRMWARE_FILE_SYSTEM2_GUID:
-            return FFS2(data, start, prefix)
+            return FFS(2, data, start, prefix)
         elif ffs_guid == g.EFI_FIRMWARE_FILE_SYSTEM3_GUID:
-            return FFS3(data, start, prefix)
+            return FFS(3, data, start, prefix)
         else:
             raise ValueError('Unknown FFS guid: %s' % g.name(ffs_guid))
-
-
-class FFS1(FFS):
-    def __init__(self, data, start, prefix=''):
-        FFS.__init__(self, 1, data, start, prefix)
-
-    def __str__(self):
-        return '0x%08x+0x%08x: FFS1' % (self.start, self.size)
-
-
-class FFS2(FFS):
-    def __init__(self, data, start, prefix=''):
-        FFS.__init__(self, 2, data, start, prefix)
-
-    def __str__(self):
-        return '0x%08x+0x%08x: FFS2' % (self.start, self.size)
-
-
-class FFS3(FFS):
-    def __init__(self, data, start, prefix=''):
-        FFS.__init__(self, 3, data, start, prefix)
-
-    def __str__(self):
-        return '0x%08x+0x%08x: FFS3' % (self.start, self.size)
