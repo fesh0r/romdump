@@ -1,0 +1,8 @@
+# python
+*.py[co]
+__pycache__/
+
+# editors
+*~
+*.bak
+.idea/
